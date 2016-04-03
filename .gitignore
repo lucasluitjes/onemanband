@@ -1,5 +1,7 @@
+*.swp
 *.gem
 *.rbc
+/examples/log
 /.config
 /coverage/
 /InstalledFiles
