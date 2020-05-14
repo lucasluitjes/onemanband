@@ -22,7 +22,7 @@ Open3.popen3("tail -f processed/output.csv") do |stdin, stdout, stderr, wait_thr
   stdout.each_line do |line|
     @values = {}
 
-    action_by_intensity(line, headers)
+    action_by_intensity(line, headers, 0.8)
 
     # debug output
     next unless (counter += 1) % 8 == 0

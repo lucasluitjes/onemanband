@@ -1,10 +1,10 @@
 module ActionUnits
   #  intensity (from 0 to 5), AU28 does not work with intensity
-  def action_by_intensity(line, headers)
+  def action_by_intensity(line, headers, time_interval)
     line.split(",").map(&:to_f).each_with_index{|n,i| @values[headers[i]] = n}
 
     if @values["success"] > 0.9 && @values["confidence"] > 0.92
-      if (Time.now-@last_action)>0.8
+      if (Time.now-@last_action ) > time_interval
         @last_action = Time.now
         if @values["AU01_r"] > 2.1
           puts action_units[:AU01]
@@ -18,11 +18,11 @@ module ActionUnits
   end
 
   # presense (0 absent, 1 present)
-  def action_by_presence(line, headers)
+  def action_by_presence(line, headers, time_interval)
     line.split(",").map(&:to_f).each_with_index{|n,i| @values[headers[i]] = n}
 
     if @values["success"] > 0.9 && @values["confidence"] > 0.92
-      if (Time.now-@last_action)>0.8
+      if (Time.now-@last_action) > time_interval
         @last_action = Time.now
         if first_on("AU45_c") && on("AU09_c")
           puts "#{action_units[:AU45]} and #{action_units[:AU09]}"
