@@ -39,12 +39,11 @@ Open3.popen3('tail -f processed/output.csv') do |_stdin, stdout, _stderr, _wait_
 
 		reduced      = Hash[output_headers.map { |n| [headers[n], @values[headers[n]]] }]
 		reduced_line = JSON[reduced]
+	
 		if mqtt
 			mqtt_client.publish(mqtt_topic, reduced_line)
 		else
-			puts line
+			puts reduced_line
 		end
-			#puts "\n\n"
-			#output_headers.each { |n| puts "#{headers[n]}: #{@values[headers[n]]}" }
 	end
 end
