@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require 'open3'
 require 'mqtt'
 require 'json'
@@ -21,8 +20,8 @@ end
 Thread.new { `./build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of output.csv` }
 sleep 5
 
+
 headers = File.read('openface-headers').split(',').map(&:strip)
-pp headers
 STDOUT.sync = true
 
 # idxssses of headers to output.

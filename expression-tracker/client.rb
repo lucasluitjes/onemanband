@@ -28,18 +28,23 @@ def handle_message(message)
 	action_by_intensity(1.3)
 end
 
-counter = 0
-if mqtt
-	mqtt_client.get(mqtt_topic) do |topic, message|
-		handle_message(message)	
-
-		# debug output
-		next unless (counter += 1) % 8 == 0
-
+def debug_line(line)
 		puts "\n\n"
 		pp @values
+
+end
+
+# Counter is for debug purposes only.
+counter = 0
+if mqtt # mqqt input.
+	mqtt_client.get(mqtt_topic) do |topic, message|
+		handle_message(message)	
+		debug_line(message) unless (counter += 1) % 8 == 0
 	end
-else
-		
+else # STDIN put.
+	while line = STDIN.gets
+		handle_message(line)
+		debug_line(line) unless (counter += 1) % 8 == 0
+	end
 end
 
