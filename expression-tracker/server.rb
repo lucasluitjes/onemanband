@@ -3,6 +3,7 @@
 require 'pp'
 require 'open3'
 require 'mqtt'
+require 'json'
 require_relative 'helper'
 include Helper
 
@@ -24,6 +25,7 @@ headers = File.read('openface-headers').split(',').map(&:strip)
 pp headers
 STDOUT.sync = true
 
+# idxssses of headers to output.
 output_headers = select_headers(headers)
 counter = 0
 @last_action = Time.now
@@ -35,11 +37,10 @@ Open3.popen3('tail -f processed/output.csv') do |_stdin, stdout, _stderr, _wait_
 		@values = {}
 		line.split(',').map(&:to_f).each_with_index { |n, i| @values[headers[i]] = n }
 
-		# debug output
-		next unless (counter += 1) % 8 == 0
-
+		reduced      = Hash[output_headers.map { |n| [headers[n], @values[headers[n]]] }]
+		reduced_line = JSON[reduced]
 		if mqtt
-			mqtt_client.publish(mqtt_topic, line)
+			mqtt_client.publish(mqtt_topic, reduced_line)
 		else
 			puts line
 		end
