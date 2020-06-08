@@ -1,2 +1,6 @@
+expression-tracker/.bundle
 expression-tracker/build
+expression-tracker/vendor
 expression-tracker/processed
+*.swp
+*.swo
