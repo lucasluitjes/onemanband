@@ -1,19 +1,26 @@
 # frozen_string_literal: true
 
 require 'open3'
-require 'mqtt'
 require 'json'
 require_relative 'helper'
 include Helper
+require_relative 'lib/pit-client'
+require 'optparse'
 
-mqtt = false
-mqtt_broker = ENV["MQTT_BROKER"] || "mqtt://localhost"
-mqtt_topic  = ENV["MQTT_TOPIC"]  || "PIT"
+@client
+@options = {
+  mqtt: false,
+}
+OptionParser.new do |opts|
+  opts.banner = "Usage: server.rb [options]"
 
-# Do we need to connect to MQTT?
-if ARGV[0] == "--mqtt"
-	mqtt = true
-	mqtt_client = MQTT::Client.connect(mqtt_broker)
+ opts.on("-m", "--mqtt", TrueClass, "Use MQTT") do |i|
+    @options[:mqtt] = true
+ end
+end.parse!
+
+if @options[:mqtt]
+		@client = PIT::Expressor.new "OpenFace"
 end
 
 # Always write to output.csv	
@@ -39,8 +46,9 @@ Open3.popen3('tail -f processed/output.csv') do |_stdin, stdout, _stderr, _wait_
 		reduced      = Hash[output_headers.map { |n| [headers[n], @values[headers[n]]] }]
 		reduced_line = JSON[reduced]
 	
-		if mqtt
-			mqtt_client.publish(mqtt_topic, reduced_line)
+		if @options[:mqtt]
+
+			@client.publish(reduced_line)
 		else
 			puts reduced_line
 		end
