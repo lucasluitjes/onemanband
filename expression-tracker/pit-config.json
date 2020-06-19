@@ -1,0 +1,39 @@
+{
+  "devices": [{
+		"id": {
+			"usb": "1058:3021",
+			"name": "FC0101"
+		},
+		"config": { // Voetsenbord default config }
+	}],
+
+	"hosts": [{
+		"id": {
+			"hostname": "server-doos",
+			"name": "OpenFace Server"
+		},
+		"config": { // OpenFace server config },
+		"blacklist": [],
+
+		"devices": [{
+			"id": {
+				"usb": "1058:3021",
+				"name": "FC0101"
+			},
+			"config": { // voetsenbord config op server }
+		}]
+	}, {
+		"id": {
+			"hostname": "laptop",
+			"name": "Lucas' Laptop"
+		},
+		"config": { // Lucas' Laptop config },
+		"devices": [{
+			"id": {
+				"usb": "1058:3021",
+				"name": "FC0101"
+			},
+			"config": { // voetsenbord config op laptop }
+		}]
+	}]
+}
