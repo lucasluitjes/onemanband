@@ -18,7 +18,7 @@ module Helper
   def select_headers(headers)
     headers.select do |n|
       n.include?('AU') ||
-        %w[confidence success].include?(n)
+        %w[confidence success timestamp].include?(n)
     end.map { |n| headers.index(n) }
   end
 end

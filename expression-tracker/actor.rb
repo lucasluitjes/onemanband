@@ -5,8 +5,7 @@ require 'open3'
 require 'json'
 require_relative 'helper'
 include Helper
-require_relative 'action_unit'
-include ActionUnit
+require_relative 'lib/recognizer'
 require_relative 'lib/pit-client'
 require 'optparse'
 
@@ -29,9 +28,17 @@ end.parse!
 
 @last_action = Time.now
 @previous_values = {}
+
+@actions = {:AU02 => 'Page_Up', :AU12 => 'Page_Down'}
+@recognizer = Recognizer.new
+@recognizer.register_callback do |action_unit|
+  xdo_key(@actions[action_unit]) 
+end
+
 def handle_message(message)
 	@values = message	
-	action_by_intensity(1.3)
+	
+  @recognizer.recognize(message)
 end
 
 def debug_line(line)
