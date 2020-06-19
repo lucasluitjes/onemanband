@@ -48,7 +48,7 @@ def debug_line(line)
 end
 
 # Counter is for debug purposes only.
-counter = 0
+@counter = 0
 if @options[:mqtt]
 		config = {
 			:subscriptions=>[
@@ -61,12 +61,12 @@ if @options[:mqtt]
 			#require 'pry'
 			#binding.pry
 			handle_message(message)	
-			debug_line(message) unless (counter += 1) % 8 == 0
+			debug_line(message) if (@counter += 1) % 8 == 0
 		end
 else # STDIN put.
 	while line = STDIN.gets
 		handle_message(line)
-		debug_line(line) unless (counter += 1) % 8 == 0
+		debug_line(line) if (@counter += 1) % 8 == 0
 	end
 end
 
