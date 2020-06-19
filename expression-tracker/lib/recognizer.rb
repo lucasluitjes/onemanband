@@ -2,7 +2,7 @@
 
 # Class for identifying OpenFace Action Units
 class Recognizer
-  TIME_INTERVAL = 0.45
+  TIME_INTERVAL = 0.45 # Originally 1.3
 
   ACTION_UNITS =  {
     AU01: 'Inner brow raiser',
