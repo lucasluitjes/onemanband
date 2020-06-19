@@ -13,15 +13,19 @@ require 'optparse'
 @client
 @options = {
   mqtt: false,
+  host: 'localhost'
 }
 OptionParser.new do |opts|
   opts.banner = "Usage: server.rb [options]"
 
- opts.on("-m", "--mqtt", TrueClass, "Use MQTT") do |i|
+  opts.on("-m", "--mqtt", TrueClass, "Use MQTT") do |i|
     @options[:mqtt] = true
- end
-end.parse!
+  end
 
+  opts.on("-h", "--host HOST", "localhost", "Specify mqtt hostname") do |i|
+  	@options[:host] = i
+  end
+end.parse!
 
 @last_action = Time.now
 @previous_values = {}
@@ -39,9 +43,12 @@ end
 # Counter is for debug purposes only.
 counter = 0
 if @options[:mqtt]
-		config = {:subscriptions=>[
-			["PIT/Expressor/OpenFace", 1], ["PIT/Expressor/Feetsboard", 2]
-		]}
+		config = {
+			:subscriptions=>[
+			  ["PIT/Expressor/OpenFace", 1], ["PIT/Expressor/Feetsboard", 2]
+      ],
+      :host => @options[:host]
+    }
 
 		@client = PIT::Actor.new "OpenFace", config do |message|
 			#require 'pry'
