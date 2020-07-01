@@ -1,17 +1,15 @@
 # frozen_string_literal: true
-
 require 'open3'
 require 'json'
-require_relative 'openface'
-require_relative 'lib/pit-client'
+require_relative 'openface/helper'
+include Helper
 
-pit_client = PIT::Client.new "expressor", "openface"
-pit_client.start do |publish|
+def run_openface(publish)
 	# Always write to output.csv	
 	Thread.new { `./build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of output.csv` }
 	sleep 5
 
-	headers = File.read('openface-headers').split(',').map(&:strip)
+	headers = File.read('openface/headers').split(',').map(&:strip)
 	STDOUT.sync = true
 
 	# idxssses of headers to output.
@@ -38,5 +36,3 @@ pit_client.start do |publish|
 		end
 	end
 end
-
-
