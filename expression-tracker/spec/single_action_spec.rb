@@ -18,7 +18,7 @@ RSpec.configure do |c|
 end
 
 describe 'single actions' do
-  it "recognizes a single action" do
+  it "recognizes a eyebrow raise" do
     fixtures = read_fixtures 'mixed.csv'
     recognizer = Recognizer.new
     result = []
@@ -26,7 +26,31 @@ describe 'single actions' do
     fixtures[230..246].each { |frame| recognizer.recognize(frame) }
     expect(result).to eq([:AU02])
   end
+
+  it "recognizes a lip stretch" do
+    fixtures = read_fixtures 'mixed.csv'
+    recognizer = Recognizer.new
+    result = []
+    recognizer.register_callback { |b| result << b }
+    fixtures[269..283].each { |frame| recognizer.recognize(frame) }
+    expect(result).to eq([:AU12])
+  end
+
+  it "recognizes a series of AUs" do
+    fixtures = read_fixtures 'mixed.csv'
+    recognizer = Recognizer.new
+    result = []
+    recognizer.register_callback { |b| result << b }
+    fixtures[292..314].each { |frame| recognizer.recognize(frame) }
+    expect(result).to eq([:AU12, :AU12, :AU02])
+  end
+
+  it "does not recognize weak signal" do
+    fixtures = read_fixtures 'mixed.csv'
+    recognizer = Recognizer.new
+    result = []
+    recognizer.register_callback { |b| result << b }
+    fixtures[364..396].each { |frame| recognizer.recognize(frame) }
+    expect(result).to eq([])
+  end
 end
-
-
-
