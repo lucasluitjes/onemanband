@@ -27,10 +27,10 @@ class Recognizer
   }.freeze
 
   COMBOS = {
-    [:AU02, :AU02] => :DOUBLE_EYEBROW_RAISE,
-    [:AU12, :AU12] => :DOUBLE_LIP_PULL,
-    [:AU12, :AU12, :AU02] => :LIP_LIP_BROW,
-    [:AU02, :AU02, :AU12] => :BROW_BROW_LIP,
+    %i[AU02 AU02] => :DOUBLE_EYEBROW_RAISE,
+    %i[AU12 AU12] => :DOUBLE_LIP_PULL,
+    %i[AU12 AU12 AU02] => :LIP_LIP_BROW,
+    %i[AU02 AU02 AU12] => :BROW_BROW_LIP
   }.freeze
 
   def initialize
@@ -44,18 +44,19 @@ class Recognizer
 
   def recognize(values)
     return unless values['success'] > 0.9 && values['confidence'] > 0.92
+
     time_since_last_action = values['timestamp'] - @last_action
     puts "#{values['AU12_r']} #{values['timestamp']} #{time_since_last_action}" if ENV['DEBUG']
-    if @last_action == 0 || time_since_last_action.between?(TIME_INTERVAL, COMBO_TIMEOUT)
-      puts 'action between' if ENV['DEBUG']
-      if au = action_unit(values)
+    if time_since_last_action > COMBO_TIMEOUT && !@combo.empty?
+      @callback.call(COMBOS[@combo] || @combo.first)
+      @combo = []
+    elsif @last_action.zero? || time_since_last_action > TIME_INTERVAL
+      puts 'action' if ENV['DEBUG']
+      if (au = action_unit(values))
         puts 'au', au if ENV['DEBUG']
         @last_action = values['timestamp']
         @combo << au
       end
-    elsif time_since_last_action > COMBO_TIMEOUT && !@combo.empty?
-      @callback.call(COMBOS[@combo] || @combo.first)
-      @combo = []
     end
   end
 
