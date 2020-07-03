@@ -2,7 +2,8 @@
 
 # Class for identifying OpenFace Action Units
 class Recognizer
-  TIME_INTERVAL = 0.45 # Originally 1.3
+  TIME_INTERVAL = 0.2 # Originally 1.3
+  COMBO_TIMEOUT = 2.0
 
   ACTION_UNITS =  {
     AU01: 'Inner brow raiser',
@@ -25,8 +26,16 @@ class Recognizer
     AU45: 'Blink'
   }.freeze
 
+  COMBOS = {
+    [:AU02, :AU02] => :DOUBLE_EYEBROW_RAISE,
+    [:AU12, :AU12] => :DOUBLE_LIP_PULL,
+    [:AU12, :AU12, :AU02] => :LIP_LIP_BROW,
+    [:AU02, :AU02, :AU12] => :BROW_BROW_LIP,
+  }.freeze
+
   def initialize
     @last_action = 0
+    @combo = []
   end
 
   def register_callback(&block)
@@ -35,19 +44,25 @@ class Recognizer
 
   def recognize(values)
     return unless values['success'] > 0.9 && values['confidence'] > 0.92
-    puts "#{values['AU12_r']} #{values['timestamp'] - @last_action}" if ENV['DEBUG']
-    return unless (values['timestamp'] - @last_action) > TIME_INTERVAL
-
-    if au = action_unit(values)
-      @last_action = values['timestamp']
-      @callback.call au
+    time_since_last_action = values['timestamp'] - @last_action
+    puts "#{values['AU12_r']} #{values['timestamp']} #{time_since_last_action}" if ENV['DEBUG']
+    if @last_action == 0 || time_since_last_action.between?(TIME_INTERVAL, COMBO_TIMEOUT)
+      puts 'action between' if ENV['DEBUG']
+      if au = action_unit(values)
+        puts 'au', au if ENV['DEBUG']
+        @last_action = values['timestamp']
+        @combo << au
+      end
+    elsif time_since_last_action > COMBO_TIMEOUT && !@combo.empty?
+      @callback.call(COMBOS[@combo] || @combo.first)
+      @combo = []
     end
   end
 
   def action_unit(values)
-    if values['AU02_r'] > 3.3
+    if values['AU02_r'] > 3.5
       :AU02
-    elsif values['AU12_r'] > 2.1
+    elsif values['AU12_r'] > 2.5
       :AU12
     end
   end

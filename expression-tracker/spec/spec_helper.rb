@@ -13,6 +13,17 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+module Helpers
+  def read_fixtures filename
+    path = File.join(File.dirname(__FILE__), 'fixtures', filename)
+    keys = CSV.open(path, &:readline).map(&:strip)
+    fixtures = CSV.read(path, { converters: :numeric})
+    fixtures.shift
+    fixtures.map {|a| Hash[ keys.zip(a) ] }
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
@@ -97,4 +108,5 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+  config.include Helpers
 end
