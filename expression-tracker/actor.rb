@@ -34,7 +34,7 @@ end.parse!
   :DOUBLE_LIP_PULL => 'Page_Down',
   :LIP_LIP_BROW => 'Up',
   :BROW_BROW_LIP => 'Control_L+F4',
-  :ROW_LIP_BROW => 'Control_L+Tab',
+  :BROW_LIP_BROW => 'Control_L+Tab',
   :LIP_BROW_LIP => 'Control_L+Shift_L+Tab'
 }
 

@@ -10,23 +10,19 @@ require 'optparse'
 @client
 @options = {
   mqtt: false,
+  timeout: 1200
 }
 OptionParser.new do |opts|
   opts.banner = "Usage: server.rb [options]"
 
- opts.on("-m", "--mqtt", TrueClass, "Use MQTT") do |i|
-    @options[:mqtt] = true
- end
+	opts.on("-m", "--mqtt", TrueClass, "Use MQTT") do |i|
+	  @options[:mqtt] = true
+	end
 end.parse!
 
 if @options[:mqtt]
 		@client = PIT::Expressor.new "OpenFace"
 end
-
-# Always write to output.csv	
-Thread.new { `./build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of output.csv` }
-sleep 5
-
 
 headers = File.read('openface-headers').split(',').map(&:strip)
 STDOUT.sync = true
@@ -36,21 +32,30 @@ output_headers = select_headers(headers)
 counter = 0
 @last_action = Time.now
 @previous_values = {}
+@processing = false
 
-# Simply tail output.csv and either publish on MQTT or print to STDOUT.
-Open3.popen3('tail -f processed/output.csv') do |_stdin, stdout, _stderr, _wait_thr|
+# Make sure processed/output.csv is a symlink to /dev/stdout (`ln -s /dev/stdout processed/output.csv`)
+cmd = "./build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of output.csv"
+Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
+	if  @options[:timeout] != 0
+	 Thread.new { sleep @options[:timeout]; `kill #{wait_thr.pid}`; exit }
+	end
 	stdout.each_line do |line|
-		@values = {}
-		line.split(',').map(&:to_f).each_with_index { |n, i| @values[headers[i]] = n }
+		if @processing
+			@values = {}
+			line.split(',').map(&:to_f).each_with_index { |n, i| @values[headers[i]] = n }
 
-		reduced      = Hash[output_headers.map { |n| [headers[n], @values[headers[n]]] }]
-		reduced_line = JSON[reduced]
-	
-		if @options[:mqtt]
+			reduced      = Hash[output_headers.map { |n| [headers[n], @values[headers[n]]] }]
+			reduced_line = JSON[reduced]
+		
+			if @options[:mqtt]
 
-			@client.publish(reduced_line)
+				@client.publish(reduced_line)
+			else
+				puts reduced_line
+			end
 		else
-			puts reduced_line
+			@processing = true if line.include?("frame, face_id, timestamp, confidence, success")
 		end
 	end
 end
