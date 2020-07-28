@@ -34,7 +34,7 @@ counter = 0
 @previous_values = {}
 @processing = false
 
-# Make sure processed/output.csv is a symlink to /dev/stdout (`ln -s /dev/stdout processed/output.csv`)
+`ln -s /dev/stdout processed/output.csv` unless File.exist?("processed/output.csv")
 cmd = "./build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of output.csv"
 Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
 	if  @options[:timeout] != 0
