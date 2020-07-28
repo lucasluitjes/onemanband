@@ -29,10 +29,23 @@ end.parse!
 @last_action = Time.now
 @previous_values = {}
 
-@actions = {:AU02 => 'Page_Up', :AU12 => 'Page_Down'}
+@actions = {
+  :DOUBLE_EYEBROW_RAISE => 'Page_Up',
+  :DOUBLE_LIP_PULL => 'Page_Down',
+  :LIP_LIP_BROW => 'Up',
+  :BROW_BROW_LIP => 'Control_L+F4',
+  :ROW_LIP_BROW => 'Control_L+Tab',
+  :LIP_BROW_LIP => 'Control_L+Shift_L+Tab'
+}
+
 @recognizer = Recognizer.new
 @recognizer.register_callback do |action_unit|
-  xdo_key(@actions[action_unit]) 
+  action = @actions[action_unit]
+  if action
+    xdo_key(action)
+  else
+    puts "\n\n#{'-' * 40}\n#{action_unit}\n#{'-' * 40}\n\n"   
+  end
 end
 
 def handle_message(message)

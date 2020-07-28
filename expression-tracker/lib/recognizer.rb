@@ -2,7 +2,7 @@
 
 # Class for identifying OpenFace Action Units
 class Recognizer
-  TIME_INTERVAL = 0.2 # Originally 1.3
+  TIME_INTERVAL = 0.5 # Originally 1.3
   COMBO_TIMEOUT = 2.0
 
   ACTION_UNITS =  {
@@ -30,11 +30,14 @@ class Recognizer
     %i[AU02 AU02] => :DOUBLE_EYEBROW_RAISE,
     %i[AU12 AU12] => :DOUBLE_LIP_PULL,
     %i[AU12 AU12 AU02] => :LIP_LIP_BROW,
-    %i[AU02 AU02 AU12] => :BROW_BROW_LIP
+    %i[AU02 AU02 AU12] => :BROW_BROW_LIP,
+    %i[AU02 AU12 AU02] => :BROW_LIP_BROW,
+    %i[AU12 AU02 AU12] => :LIP_BROW_LIP
   }.freeze
 
   def initialize
     @last_action = 0
+    @last_timestamp = 0
     @combo = []
   end
 
@@ -44,6 +47,10 @@ class Recognizer
 
   def recognize(values)
     return unless values['success'] > 0.9 && values['confidence'] > 0.92
+
+    # Reset last_action if server was restarted.
+    @last_action = 0 if @last_timestamp > values['timestamp']
+    @last_timestamp = values['timestamp']
 
     time_since_last_action = values['timestamp'] - @last_action
     puts "#{values['AU12_r']} #{values['timestamp']} #{time_since_last_action}" if ENV['DEBUG']
