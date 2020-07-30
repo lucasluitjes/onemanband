@@ -13,7 +13,7 @@ require 'optparse'
   timeout: 1200
 }
 OptionParser.new do |opts|
-  opts.banner = "Usage: server.rb [options]"
+  opts.banner = "Usage: expressor.rb [options]"
 
 	opts.on("-m", "--mqtt", TrueClass, "Use MQTT") do |i|
 	  @options[:mqtt] = true

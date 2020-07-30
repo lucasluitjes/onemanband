@@ -32,7 +32,11 @@ class Recognizer
     %i[AU12 AU12 AU02] => :LIP_LIP_BROW,
     %i[AU02 AU02 AU12] => :BROW_BROW_LIP,
     %i[AU02 AU12 AU02] => :BROW_LIP_BROW,
-    %i[AU12 AU02 AU12] => :LIP_BROW_LIP
+    %i[AU12 AU02 AU12] => :LIP_BROW_LIP,
+    %i[AU02 AU12] => :BROW_LIP,
+    %i[AU12 AU02] => :LIP_BROW,
+    %I[AU02 AU12 AU12] => :BROW_LIP_LIP
+
   }.freeze
 
   def initialize
