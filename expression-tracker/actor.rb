@@ -43,7 +43,7 @@ end.parse!
 
 @intervals = [-0.1, -0.25, -0.5, -1, 0, 1, 0.5, 0.25, 0.1]
 @scroll_speed = @intervals.index(0)
-@paused
+@paused = false
 Thread.new {pausing}
 Thread.new {scrolling}
 
@@ -71,18 +71,20 @@ Thread.new {scrolling}
 end
 
 def handle_message(message)
-	@values = message	
-	
+	@values = message
   @recognizer.recognize(message) unless @paused
 end
 
 def debug_line(line)
 		puts "\n\n"
+    puts "paused: #{@paused}"
+    puts "scroll speed: #{@intervals[@scroll_speed]}"
 		pp @values
 end
 
 def pausing
-  _stdin, stdout, _stderr, _wait_thr = Open3.popen3('xinput test-xi2 --root')
+  keyboard_id = `xinput`.scan(/^.*AT Translated Set 2 keyboard\s+id=(\d+)/).flatten.first
+  _stdin, stdout, _stderr, _wait_thr = Open3.popen3("xinput test-xi2 --root #{keyboard_id}")
 
   event = nil
   stdout.each do |line|
@@ -90,7 +92,7 @@ def pausing
     next unless line.include?('detail:')
 
     keypress = line.split[1]
-    if event == '(KeyRelease)' && keypress.to_i == 69
+    if event == '(RawKeyRelease)' && keypress.to_i == 69
       @paused = !@paused
       event = nil
     end
