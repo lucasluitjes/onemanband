@@ -1,30 +1,31 @@
+# frozen_string_literal: true
 
-def stop()
-	puts "Stopping..."
+def stop
+  puts 'Stopping...'
 end
 
-def update()
-	puts "Updating..."
+def update
+  puts 'Updating...'
 end
 
-def start()
-	puts "Starting..."
-	_run
+def start
+  puts 'Starting...'
+  _run
 end
 
-def _run()
-	sleep 2
-	Process.kill("USR1", @pid)
-	sleep 2
-	puts "end _run"
+def _run
+  sleep 2
+  Process.kill('USR1', @pid)
+  sleep 2
+  puts 'end _run'
 end
 
 @pid = fork do
-	Signal.trap("USR1") do
-		stop()
-		update()
-		start()
-	end
+  Signal.trap('USR1') do
+    stop
+    update
+    start
+  end
 
-	start
+  start
 end

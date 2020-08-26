@@ -3,7 +3,6 @@
 module ActionUnit
   #  intensity (from 0 to 5), AU28 does not work with intensity
   def action_by_intensity(time_interval)
-
     if @values['success'] > 0.9 && @values['confidence'] > 0.92
       if (Time.now - @last_action) > time_interval
         @last_action = Time.now
@@ -20,7 +19,6 @@ module ActionUnit
 
   # presense (0 absent, 1 present)
   def action_by_presence(time_interval)
-
     if @values['success'] > 0.9 && @values['confidence'] > 0.92
       if (Time.now - @last_action) > time_interval
         @last_action = Time.now

@@ -57,7 +57,9 @@ class Recognizer
     @last_timestamp = values['timestamp']
 
     time_since_last_action = values['timestamp'] - @last_action
-    puts "#{values['AU12_r']} #{values['timestamp']} #{time_since_last_action}" if ENV['DEBUG']
+    if ENV['DEBUG']
+      puts "#{values['AU12_r']} #{values['timestamp']} #{time_since_last_action}"
+    end
     if time_since_last_action > COMBO_TIMEOUT && !@combo.empty?
       @callback.call(COMBOS[@combo] || @combo.first)
       @combo = []
