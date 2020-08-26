@@ -102,7 +102,7 @@ end
 def scrolling
   last_scroll = Time.now.to_f
   loop do
-    sleep 0.5
+    sleep 0.05
     vec = @intervals[@scroll_speed] # scroll speed and direction
     next if vec == 0
 
