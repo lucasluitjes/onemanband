@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'csv'
 require 'pry'
 require_relative 'spec_helper'
 require_relative '../lib/recognizer'
 
 describe 'single actions' do
-  it "recognizes a eyebrow raise" do
+  it 'recognizes a eyebrow raise' do
     fixtures = read_fixtures 'mixed.csv'
     recognizer = Recognizer.new
     result = []
@@ -13,7 +15,7 @@ describe 'single actions' do
     expect(result).to eq([:AU02])
   end
 
-  it "recognizes a lip stretch" do
+  it 'recognizes a lip stretch' do
     fixtures = read_fixtures 'mixed.csv'
     recognizer = Recognizer.new
     result = []
@@ -22,7 +24,7 @@ describe 'single actions' do
     expect(result).to eq([:AU12])
   end
 
-  it "recognizes a series of AUs" do
+  it 'recognizes a series of AUs' do
     fixtures = read_fixtures 'mixed.csv'
     recognizer = Recognizer.new
     result = []
@@ -31,7 +33,7 @@ describe 'single actions' do
     expect(result).to eq([:LIP_LIP_BROW])
   end
 
-  it "does not recognize weak signal" do
+  it 'does not recognize weak signal' do
     fixtures = read_fixtures 'mixed.csv'
     recognizer = Recognizer.new
     result = []
