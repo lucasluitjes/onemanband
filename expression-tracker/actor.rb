@@ -30,18 +30,20 @@ end.parse!
 @previous_values = {}
 
 @actions = {
-  DOUBLE_EYEBROW_RAISE: 'Page_Up',
-  DOUBLE_LIP_PULL: 'Page_Down',
-  LIP_LIP_BROW: 'Up',
-  BROW_BROW_LIP: 'Control_L+F4',
-  BROW_LIP_BROW: 'Control_L+Tab',
-  LIP_BROW_LIP: 'Control_L+Shift_L+Tab',
-  BROW_LIP: 'scrolling_loop_up',
-  LIP_BROW: 'scrolling_loop_down',
-  BROW_LIP_LIP: 'scrolling_loop_reset'
+  :DOUBLE_EYEBROW_RAISE => 'Page_Up',
+  :DOUBLE_LIP_PULL => 'Page_Down',
+  :LIP_LIP_BROW => 'Up',
+  :BROW_BROW_LIP => 'Control_L+F4',
+  :BROW_LIP_BROW => 'Control_L+Tab',
+  :LIP_BROW_LIP => 'Control_L+Shift_L+Tab',
+  :BROW_LIP => 'scrolling_loop_up',
+  :LIP_BROW => 'scrolling_loop_down',
+  :BROW_LIP_LIP => 'scrolling_loop_reset',
+  :BROW_BROW_BROW => 'Control_L+KP_Subtract',
+  :LIP_LIP_LIP => 'Control_L+KP_Add'
 }
 
-@intervals = [-0.1, -0.25, -0.5, -1, 0, 1, 0.5, 0.25, 0.1]
+@intervals = [-0.05, -0.25, -0.5, -1, 0, 1, 0.5, 0.25, 0.05]
 @scroll_speed = @intervals.index(0)
 @paused = false
 Thread.new { pausing }
