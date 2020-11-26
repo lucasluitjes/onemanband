@@ -77,10 +77,29 @@ class Recognizer
   end
 
   def action_unit(values)
-    if values['AU02_r'] > 3.5
+    brow_raiser_lip_puller = [
+      ['AU02_r', 3.5],
+      ['AU12_r', 1.3]
+    ]
+    brow_lowerer_lip_part = [
+      ['AU04_r', 1.5],
+      ['AU25_r', 1.5]
+    ]
+    c = brow_lowerer_lip_part
+
+    if values[c[0][0]] > c[0][1]
       :AU02
-    elsif values['AU12_r'] > 2.5
+    elsif values[c[1][0]] > c[1][1]#2.5
       :AU12
     end
+
+    # Below is the original implementation. Above is a provisional way to make the expressions
+    # and thresholds more configurable. Should totally be rewritten.
+    #
+    # if values['AU02_r'] > 3.5
+    #   :AU02
+    # elsif values['AU12_r'] > 1.3#2.5
+    #   :AU12
+    # end
   end
 end

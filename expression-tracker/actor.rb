@@ -77,11 +77,11 @@ def handle_message(message)
   @recognizer.recognize(message) unless @paused
 end
 
-def debug_line(_line)
+def debug_line(message)
   puts "\n\n"
   puts "paused: #{@paused}"
   puts "scroll speed: #{@intervals[@scroll_speed]}"
-  pp @values
+  pp message
 end
 
 def pausing
@@ -135,8 +135,9 @@ if @options[:mqtt]
   end
 else # STDIN put.
   while line = STDIN.gets
-    handle_message(line)
-    debug_line(line) if (@counter += 1) % 8 == 0
+    message = JSON.parse(line)
+    handle_message(message)
+    debug_line(message) if (@counter += 1) % 8 == 0
   end
 end
 
