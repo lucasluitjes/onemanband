@@ -35,7 +35,7 @@ counter = 0
 unless File.exist?('processed/output.csv')
   `ln -s /dev/stdout processed/output.csv`
 end
-cmd = './build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of output.csv'
+cmd = './build/bin/FeatureExtraction -device 0 -aus -2Dfp -3Dfp -pdmparams -pose -gaze -of processed/output.csv'
 Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
   if @options[:timeout] != 0
     Thread.new { sleep @options[:timeout]; `kill #{wait_thr.pid}`; exit }
@@ -54,7 +54,7 @@ Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
       else
         puts reduced_line
       end
-    elsif line.include?('frame, face_id, timestamp, confidence, success')
+    elsif line.include?('frame,face_id,timestamp,confidence,success')
       @processing = true
     end
   end
